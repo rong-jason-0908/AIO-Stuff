@@ -263,11 +263,7 @@ def lookupcaptions(captions):
 
 # ---- Figure out which captions the model was actually trained on ----
 
-voxelroot = next(
-    (d for d in (os.path.join(SCRIPT_DIR, "voxelized_shapenet"),
-                 os.path.expanduser("~/Downloads/voxelized_shapenet")) if os.path.isdir(d)),
-    os.path.join(SCRIPT_DIR, "voxelized_shapenet"),
-)
+voxelroot = os.path.join(SCRIPT_DIR, "voxelized_shapenet")
 manifestpath = os.path.join(voxelroot, "manifest.csv")
 if os.path.exists(manifestpath):
     df = pd.read_csv(manifestpath).dropna(subset=["caption"])
@@ -350,7 +346,7 @@ def run(prompt, guidance_scale, steps, use_seed, seed):
 
     outdir = tempfile.mkdtemp(prefix="voxel_app_")
 
-    obj_paths = [None] * NUM_OUTPUTS
+    glb_paths = [None] * NUM_OUTPUTS
     vox_paths = [None] * NUM_OUTPUTS
     occupied_counts = []
     routedprompt = None
@@ -358,7 +354,7 @@ def run(prompt, guidance_scale, steps, use_seed, seed):
     for i in range(NUM_OUTPUTS):
         # each of the 6 is its own independent sampling run -- if a seed is
         # fixed we still vary it per-slot so they aren't 6 copies of the same result
-        seed_val = int(seed) + i if use_seed else None
+        seed_val = int(seed or 0) + i if use_seed else None
         voxels, routedprompt = generate(prompt, guidancescale=guidance_scale, numsteps=int(steps), seed=seed_val)
         occupied = int(voxels.sum())
         occupied_counts.append(occupied)
@@ -372,9 +368,9 @@ def run(prompt, guidance_scale, steps, use_seed, seed):
         voxelgrid = trimesh.voxel.VoxelGrid(voxels.astype(bool))
         mesh = voxelgrid.as_boxes()
         mesh.visual.face_colors = [255, 205, 90, 255]  # bright warm color, not the dim default gray
-        obj_path = os.path.join(outdir, f"preview_{i}.glb")
-        mesh.export(obj_path)
-        obj_paths[i] = obj_path
+        glb_path = os.path.join(outdir, f"preview_{i}.glb")
+        mesh.export(glb_path)
+        glb_paths[i] = glb_path
 
         vox_path = os.path.join(outdir, f"output_{i}.vox")
         Entity(data=voxels.astype(int)).save(vox_path)
@@ -382,7 +378,7 @@ def run(prompt, guidance_scale, steps, use_seed, seed):
 
     counts_str = ", ".join(str(c) for c in occupied_counts)
     status = f"'{prompt}' -> routed to '{routedprompt}'  |  occupied voxels per output: {counts_str}"
-    return (*obj_paths, *vox_paths, status)
+    return (*glb_paths, *vox_paths, status)
 
 
 demo = gr.Interface(
@@ -426,4 +422,4 @@ demo = gr.Interface(
 )
 
 if __name__ == "__main__":
-    demo.launch(share=True)
+    demo.launch()
