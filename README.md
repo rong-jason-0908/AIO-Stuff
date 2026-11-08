@@ -1,6 +1,6 @@
 # AIO-Stuff
 
-A personal workspace with two parts:
+two parts:
 
 1. **[Text-to-Voxel Generator](#text-to-voxel-generator)** is a polished, runnable project: type a word and get 3D voxel models back.
 2. **[Homework](#homework)** holds course notebooks and worksheets I use for practice. They are working files, not finished products.
