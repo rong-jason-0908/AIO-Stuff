@@ -9,11 +9,11 @@ A personal workspace with two parts:
 
 ## Text-to-Voxel Generator
 
-Type a prompt like "a chair" and the generator produces six different 3D voxel models. You can rotate each one in the browser and download it as a `.vox` file to open in [MagicaVoxel](https://ephtracy.github.io/).
+give prompt like "a chair" and the generator produces six different 3D voxel models. You can rotate each one in the browser and download it as a `.vox` file to open in [MagicaVoxel](https://ephtracy.github.io/).
 
-Built jointly with Caleb.
+thank u to caleb for helping quite a lot on this
 
-### How it works
+### includes:
 
 - **3D VAE.** A convolutional variational autoencoder compresses a 32x32x32 voxel grid into a small latent volume (4 channels, 8x8x8). Its weights are frozen after training.
 - **Latent diffusion.** A 3D U-Net with cross-attention learns to denoise that latent volume, conditioned on text.
@@ -21,7 +21,7 @@ Built jointly with Caleb.
 - **Sampling.** DDIM sampling with classifier-free guidance. Guidance scale and step count are adjustable in the app.
 - **Prompt routing.** A prompt outside the trained categories is matched to the closest trained category by CLIP similarity.
 
-The longer-term goal is a model that generalizes from word-model pairs instead of memorizing a few hardcoded words. With more training pairs, it may be able to do one-shot generalization. That is future work and is not claimed here.
+The longer-term goal is a model that generalizes from word-model pairs instead of memorizing some hardcoded words. With more training pairs, it may be able to do one-shot generalization. Thats for the future :)
 
 ### Run it
 
